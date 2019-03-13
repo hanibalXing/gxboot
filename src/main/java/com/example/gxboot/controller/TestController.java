@@ -1,7 +1,6 @@
 package com.example.gxboot.controller;
 
 import com.example.gxboot.Bean.User;
-import lombok.extern.log4j.Log4j;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
