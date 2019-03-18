@@ -2,11 +2,12 @@ package com.example.gxboot.controller;
 
 import com.example.gxboot.Bean.User;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 /**
@@ -21,6 +22,9 @@ import static org.springframework.web.bind.annotation.RequestMethod.*;
 @RestController
 @Slf4j
 public class TestController {
+	@Autowired
+	private KafkaTemplate kafkaTemplate;
+
 	@RequestMapping(path = "/hi", method = POST)
 	public String add(@RequestBody User user) {
 		return "123";
@@ -31,10 +35,6 @@ public class TestController {
 		return "234";
 	}
 
-	@RequestMapping(path = "/hi/{id}", method = GET)
-	public String page(@PathVariable Long id) {
-		return "235";
-	}
 
 	@RequestMapping(path = "/hi/{id}", method = PUT)
 	public String update(@PathVariable Long id, @RequestBody User user) {
@@ -45,6 +45,13 @@ public class TestController {
 	@RequestMapping(path = "/hi", method = DELETE)
 	public String delete() {
 		return "456";
+	}
+
+	@RequestMapping(path = "/sendmessage", method = POST)
+	public String send(@RequestBody String msg) {
+		log.info("生产者生产的消息：" + msg);
+		kafkaTemplate.send("test",0,"test",msg);
+		return "success";
 	}
 
 
