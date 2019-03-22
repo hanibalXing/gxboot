@@ -1,5 +1,6 @@
 package com.example.gxboot.consumer;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
@@ -14,11 +15,17 @@ import org.springframework.stereotype.Component;
  * @since 1.7
  */
 @Component
+@Slf4j
 public class KafkaComsumer {
-	@KafkaListener(topics = "test")
-	public void listen(ConsumerRecord<?, ?> record) throws Exception {
-		System.out.printf("topic = %s, offset = %d,key = %s, value = %s \n", record.topic(), record.offset()
-				, record.key(), record.value());
+	@KafkaListener(topics = "testpartitions", groupId = "1")
+	public void listen1(ConsumerRecord<?, ?> record) throws Exception {
+		log.info("topic = {}, offset = {},key = {},value = {},partition = {}", record.topic(),
+				record.offset(), record.key(), record.value(), record.partition());
 	}
 
+	@KafkaListener(topics = "testpartitions", groupId = "1")
+	public void listen2(ConsumerRecord<?, ?> record) throws Exception {
+		log.info("topic = {}, offset = {},key = {}, value = {} , partition = {}", record.topic(),
+				record.offset(), record.key(), record.value(), record.partition());
+	}
 }

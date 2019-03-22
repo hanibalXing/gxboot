@@ -4,10 +4,14 @@ import com.example.gxboot.Bean.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.util.concurrent.ListenableFuture;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.stream.IntStream;
+
 import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 /**
@@ -49,8 +53,11 @@ public class TestController {
 
 	@RequestMapping(path = "/sendmessage", method = POST)
 	public String send(@RequestBody String msg) {
-		log.info("生产者生产的消息：" + msg);
-		kafkaTemplate.send("test",0,"test",msg);
+		//log.info("生产者生产的消息：" + msg);
+		//ListenableFuture send = kafkaTemplate.send("testpartitions",1,  "test", msg);
+		IntStream.rangeClosed(1,100).forEach(i->{
+			kafkaTemplate.send("testpartitions",String.valueOf(i), String.valueOf(i));
+		});
 		return "success";
 	}
 
