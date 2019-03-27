@@ -1,5 +1,6 @@
 package com.example.gxboot.controller;
 
+import com.example.gxboot.Bean.HttpMessage;
 import com.example.gxboot.Bean.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +31,8 @@ public class TestController {
 	private KafkaTemplate kafkaTemplate;
 
 	@RequestMapping(path = "/hi", method = POST)
-	public String add(@RequestBody User user) {
+	public String add(@RequestBody HttpMessage httpMessage) {
+		log.info("message:{}",httpMessage.getMessageContent());
 		return "123";
 	}
 

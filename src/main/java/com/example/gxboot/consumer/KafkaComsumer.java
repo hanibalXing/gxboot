@@ -17,13 +17,13 @@ import org.springframework.stereotype.Component;
 @Component
 @Slf4j
 public class KafkaComsumer {
-	@KafkaListener(topics = "testpartitions", groupId = "1")
+//	@KafkaListener(topics = "testpartitions", groupId = "1")
 	public void listen1(ConsumerRecord<?, ?> record) throws Exception {
 		log.info("topic = {}, offset = {},key = {},value = {},partition = {}", record.topic(),
 				record.offset(), record.key(), record.value(), record.partition());
 	}
 
-	@KafkaListener(topics = "testpartitions", groupId = "1")
+//	@KafkaListener(topics = "testpartitions", groupId = "1")
 	public void listen2(ConsumerRecord<?, ?> record) throws Exception {
 		log.info("topic = {}, offset = {},key = {}, value = {} , partition = {}", record.topic(),
 				record.offset(), record.key(), record.value(), record.partition());
