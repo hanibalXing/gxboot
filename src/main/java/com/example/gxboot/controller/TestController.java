@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.stream.IntStream;
 
+import static java.util.concurrent.ThreadLocalRandom.current;
 import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 /**
@@ -58,7 +59,7 @@ public class TestController {
 		//log.info("生产者生产的消息：" + msg);
 		//ListenableFuture send = kafkaTemplate.send("testpartitions",1,  "test", msg);
 		IntStream.rangeClosed(1,100).forEach(i->{
-			kafkaTemplate.send("testpartitions",String.valueOf(i), String.valueOf(i));
+			kafkaTemplate.send("storm",String.valueOf(i),current().nextInt(5)+"," +i);
 		});
 		return "success";
 	}
