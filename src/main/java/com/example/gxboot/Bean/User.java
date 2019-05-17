@@ -1,5 +1,6 @@
 package com.example.gxboot.Bean;
 
+import com.example.gxboot.annotation.GxAnnotation;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -15,6 +16,7 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class User {
+	@GxAnnotation()
 	private String userName;
 	private Integer age;
 }

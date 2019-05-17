@@ -38,8 +38,9 @@ public class TestController {
 	}
 
 	@RequestMapping(path = "/hi/{id}", method = GET)
-	public String get(@PathVariable Long id) {
-		return "234";
+	public User get(@PathVariable Long id) {
+		User user=new User("gxx",12);
+		return user;
 	}
 
 
