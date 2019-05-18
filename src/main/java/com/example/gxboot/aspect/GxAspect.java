@@ -9,6 +9,8 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.core.annotation.Order;
+import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -16,6 +18,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -33,37 +36,57 @@ import java.util.stream.Collectors;
 @Component //该标签把LoggerAspect类放到IOC容器中
 public class GxAspect {
     @Pointcut("execution(public * com.example.gxboot.controller.*Controller.*(..))")
-    public void declearJoinPointExpression(){}
+    public void declearJoinPointExpression() {
+    }
 
-    @Around(value="declearJoinPointExpression()")
-    public Object aroundMethod(ProceedingJoinPoint point){
+    @Around(value = "declearJoinPointExpression()")
+    public Object aroundMethod(ProceedingJoinPoint point) {
 
-        final Object result ;
+        Object result;
         String methodName = point.getSignature().getName();
         try {
             //前置通知
-            System.out.println("The method "+ methodName+" start. param<"+ Arrays.asList(point.getArgs())+">");
+            //System.out.println("The method "+ methodName+" start. param<"+ Arrays.asList(point.getArgs())+">");
             //执行目标方法
             result = point.proceed();
-            Class<?> clazz = result.getClass();
-            Arrays.asList(clazz.getDeclaredFields()).stream()
-                    .filter(field -> null != field.getAnnotation(GxAnnotation.class))
-                    .forEach(field -> {
-                        try {
-                            BeanUtils.setProperty(result,field.getName(),BeanUtils.getProperty(result,field.getName())+"123");
-                        } catch (Exception e ) {
-                            e.printStackTrace();
-                        }
-                    });
+            List content;
+            if (result instanceof Page) {
+                Page result1 = (Page) result;
+                content = ((Page) result).getContent();
+                content.forEach(this::makeValue);
+            } else if (result instanceof ResponseEntity) {
+                makeValue(((ResponseEntity) result).getBody());
+            } else {
+                makeValue(result);
+            }
+
+          /*  if (clazz.isAssignableFrom(Page.class)) {
+                Page result1 = (Page) result;
+                List content = result1.getContent();
+            }*/
+
             //返回通知
-            System.out.println("The method "+ methodName+" end. result<"+ result+">");
+            System.out.println("The method " + methodName + " end. result<" + result + ">");
         } catch (Throwable e) {
             //异常通知
-            System.out.println("this method "+methodName+" end.ex message<"+e+">");
+            System.out.println("this method " + methodName + " end.ex message<" + e + ">");
             throw new RuntimeException(e);
         }
         //后置通知
-        System.out.println("The method "+ methodName+" end.");
+        System.out.println("The method " + methodName + " end.");
         return result;
+    }
+
+    private void makeValue(Object result) {
+        Class<?> clazz = result.getClass();
+        Arrays.asList(clazz.getDeclaredFields()).stream()
+                .filter(field -> null != field.getAnnotation(GxAnnotation.class))
+                .forEach(field -> {
+                    try {
+                        BeanUtils.setProperty(result, field.getName(), BeanUtils.getProperty(result, field.getName()) + "123");
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                });
     }
 }

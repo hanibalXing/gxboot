@@ -4,6 +4,9 @@ import com.example.gxboot.Bean.HttpMessage;
 import com.example.gxboot.Bean.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.http.ResponseEntity;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.util.concurrent.ListenableFuture;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -11,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Arrays;
 import java.util.stream.IntStream;
 
 import static java.util.concurrent.ThreadLocalRandom.current;
@@ -38,9 +42,17 @@ public class TestController {
 	}
 
 	@RequestMapping(path = "/hi/{id}", method = GET)
-	public User get(@PathVariable Long id) {
+	public Page<User> get(@PathVariable Long id) {
 		User user=new User("gxx",12);
-		return user;
+		Page<User> p=new PageImpl<>(Arrays.asList(user));
+
+		return p;
+	}
+
+	@RequestMapping(path = "/hi/{id}/{id2}", method = GET)
+	public ResponseEntity<User> get(@PathVariable Long id,@PathVariable Long id2) {
+		User user=new User("gxx",12);
+		return ResponseEntity.status(200).body(user);
 	}
 
 
